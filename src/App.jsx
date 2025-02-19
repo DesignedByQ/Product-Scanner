@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QrReader } from 'react-qr-reader';  // Use this import for QR Reader
 import './Styles.css';
+import QRScanner from './QRScanner'; 
 
 function App() {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -85,6 +86,17 @@ function App() {
           style={{ width: '100%' }}
         />
       </div>
+      
+      <div>
+      <h1>QR Code Scanner</h1>
+      <QRScanner onScan={handleScan} />
+      <h2>Scanned Products</h2>
+      <ul>
+        {scannedProducts.map((item, index) => (
+          <li key={index}>{item.id} - Qty: {item.qty}</li>
+        ))}
+      </ul>
+    </div>
 
       <div className="manual-input">
         <h3>Manual input</h3>
