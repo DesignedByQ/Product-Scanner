@@ -1,0 +1,129 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    background-color: #000000;
+    color: #FFD700;
+    padding: 10px;
+    margin: 0;
+  }
+  
+  .brand-name {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  .brand-subtitle {
+    font-weight: normal;
+  }
+  
+  h2 {
+    color: #000000;
+  }
+  
+  .manual-input {
+    background-color: #000000;
+    color: #FFD700;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+  
+  .manual-input input {
+    width: 40%;
+    margin-right: 5px;
+    padding: 5px;
+  }
+  
+  .manual-input button {
+    background-color: #FFD700;
+    color: #000000;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  button:hover {
+    background-color: #FFC300;
+  }
+  
+  .cart-table {
+    width: 100%;
+    margin: 10px 0;
+    border-collapse: collapse;
+  }
+  
+  .cart-table th,
+  .cart-table td {
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+  
+  .total-cost {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .container {
+    padding: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    input[type="text"],
+    input[type="number"] {
+      width: 80%;
+    }
+  
+    button {
+      width: 100%;
+      margin-top: 100px;
+    }
+  }
+
+  .qr-scanner-window {
+    width: 80%;
+    margin: 20px auto;
+    border: 2px solid #000;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .delete-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .delete-btn:hover {
+    background-color: #cc0000;
+  }
+  
+  .buy {
+    background-color: #FFD700;
+    color: #000000;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
