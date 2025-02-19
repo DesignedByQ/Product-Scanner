@@ -71,7 +71,7 @@ function App() {
       <h2>Scan the QR code of each item!</h2>
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
-      <div className="qr-scanner-window">
+      {/* <div className="qr-scanner-window">
         <QrReader
           delay={300}
           onError={handleError}
@@ -85,8 +85,30 @@ function App() {
           }}
           style={{ width: '100%' }}
         />
+      </div> */}
+
+      <div className="qr-scanner-window">
+      <QrReader
+        delay={300}
+        constraints={{
+          video: {
+            facingMode: 'environment' // Use 'environment' for the back camera
+          }
+        }}
+        onError={handleError}
+        onResult={(result, error) => {
+          if (result) {
+            handleScan(result?.text);
+          }
+          if (error) {
+            console.error(error);
+          }
+        }}
+        style={{ width: '100%' }}
+      />
       </div>
-      
+
+
       <div>
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
