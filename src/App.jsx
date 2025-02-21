@@ -209,7 +209,7 @@ function App() {
 
       <h3 className="total-cost">Total Cost: {calculateTotal()} TZS</h3>
 
-      <div>
+      <div className="manual-input">
         <label>Customers Phone No. </label>
         <input
           type="text"
