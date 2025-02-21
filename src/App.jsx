@@ -131,7 +131,7 @@ function App() {
       </div>
 
 
-      <div>
+      {/* <div>
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
       <h2>Scanned Products</h2>
@@ -140,7 +140,7 @@ function App() {
           <li key={index}>{item.id} - Qty: {item.qty}</li>
         ))}
       </ul>
-      </div>
+      </div> */}
 
       <div className="manual-input">
         <h3>Manual input</h3>
