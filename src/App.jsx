@@ -218,7 +218,7 @@ function App() {
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
       </div>
-      <button className="buy" onClick={handleBuy}>Buy</button>
+      <button type="button" className="buy" onClick={handleBuy}>Buy</button>
     </div>
   );
 }
