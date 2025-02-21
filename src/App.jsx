@@ -74,22 +74,40 @@ function App() {
   }; 
   
   const manualAddToCart = (id, qty) => {
-    const productToAdd = exProd.find(
-      (product) => product.id === id
-    );
- 
+    // Check if the product exists in the inventory
+    const productToAdd = exProd.find((product) => product.id === id);
+  
     if (productToAdd) {
-      productToAdd.qty += qty;
-      setScannedProducts([...scannedProducts]);
+      // Check if it's already in the cart
+      const existingCartProduct = scannedProducts.find(
+        (product) => product.id === id
+      );
+  
+      if (existingCartProduct) {
+        // If it's already in the cart, update the quantity
+        const updatedProducts = scannedProducts.map((product) =>
+          product.id === id
+            ? { ...product, qty: product.qty + qty }
+            : product
+        );
+        setScannedProducts(updatedProducts);
+      } else {
+        // If not in cart, add it with the initial quantity
+        setScannedProducts([
+          ...scannedProducts,
+          {
+            id: productToAdd.id,
+            name: productToAdd.name,
+            qty,
+            price: productToAdd.price,
+          },
+        ]);
+      }
     } else {
-      //console.error('Product not found');
-      setScannedProducts([
-        ...scannedProducts,
-        { id: productToAdd.id, name: productToAdd.name, qty, price: productToAdd.price },
-      ]);
+      alert('Product not found in inventory');
     }
   };
-
+  
   const handleManualAdd = () => {
     if (manualProductId && manualQty > 0) {
       manualAddToCart(manualProductId, parseInt(manualQty));
@@ -97,7 +115,7 @@ function App() {
       setManualQty(1);
     }
   };
-
+  
   const calculateTotal = () => {
     return scannedProducts.reduce(
       (total, product) => total + product.qty * product.price,
