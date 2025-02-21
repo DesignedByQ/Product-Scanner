@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { QrReader } from 'react-qr-reader';  // Use this import for QR Reader
+//import { QrReader } from 'react-qr-reader';  // Use this import for QR Reader
 import './Styles.css';
-//import QRScanner from './QRScanner'; 
+import QRScanner from './QRScanner'; 
 
 function App() {
   const [exProd] = useState([
@@ -94,22 +94,6 @@ function App() {
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
       {/* <div className="qr-scanner-window">
-        <QrReader
-          delay={300}
-          onError={handleError}
-          onResult={(result, error) => {
-            if (result) {
-              handleScan(result?.text);
-            }
-            if (error) {
-              console.error(error);
-            }
-          }}
-          style={{ width: '100%' }}
-        />
-      </div> */}
-
-      <div className="qr-scanner-window">
       <QrReader
         delay={300}
         constraints={{
@@ -128,10 +112,9 @@ function App() {
         }}
         style={{ width: '100%' }}
       />
-      </div>
+      </div> */}
 
-
-      {/* <div>
+      <div>
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
       <h2>Scanned Products</h2>
@@ -140,7 +123,7 @@ function App() {
           <li key={index}>{item.id} - Qty: {item.qty}</li>
         ))}
       </ul>
-      </div> */}
+      </div>
 
       <div className="manual-input">
         <h3>Manual input</h3>
