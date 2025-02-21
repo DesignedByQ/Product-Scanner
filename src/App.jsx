@@ -51,20 +51,32 @@ function App() {
   //   }
   // };
   
-  const addToCart = (productId, qty) => {
-    const existingCartProduct = exProd.find(
-      (product) => product.id === productId
+  const addToCart = (scannedData, qty) => {
+    // Check if the product exists in the inventory
+    const productToAdd = exProd.find(
+      (product) => product.id === scannedData.id
     );
  
-    if (existingCartProduct) {
-      existingCartProduct.qty += qty;
-      setScannedProducts([...scannedProducts]);
+    if (productToAdd) {
+      // Check if it's already in the cart
+      const existingCartProducts = scannedProducts.find(
+        (product) => product.id === productToAdd.id
+      );
+      if (existingCartProducts) {
+        existingCartProducts.qty += qty;
+        setScannedProducts([...scannedProducts]);
+      } else {
+        setScannedProducts([
+          ...scannedProducts,
+          { id: productToAdd.id, name: productToAdd.name, qty, price: productToAdd.price },
+        ]);
+      }
     } else {
-      //console.error('Product not found');
-      setScannedProducts([
-        ...scannedProducts,
-        { id: productId.id, name: productId.name, qty, price: productId.price },
-      ]);
+      console.error('Product not found');
+      // setScannedProducts([
+      //   ...scannedProducts,
+      //   { id: productId.id, name: productId.name, qty, price: productId.price },
+      // ]);
     }
   };
 
@@ -114,7 +126,7 @@ function App() {
       <h2>Scanned Products</h2>
       <ul>
         {scannedProducts.map((item, index) => (
-          <li key={index}>{item["id"]} {item["product"]} - Qty: {item.qty}</li>
+          <li key={index}>{item.id} {item.product} - Qty: {item.qty}</li>
         ))}
       </ul>
       </div>
