@@ -26,36 +26,48 @@ function App() {
   //  console.error(err);
   //};
 
+  // const addToCart = (productId, qty) => {
+  //   // Check if the product exists in the inventory
+  //   const productToAdd = exProd.find((product) => product.id === productId);
+  
+  //   if (productToAdd) {
+  //     // Check if it's already in the cart
+  //     const existingProduct = scannedProducts.find(
+  //       (product) => product.id === productId
+  //     );
+  
+  //     if (existingProduct) {
+  //       // Create a new array with updated quantity
+  //       const updatedProducts = scannedProducts.map((product) =>
+  //         product.id === productId
+  //           ? { ...product, qty: product.qty + qty }
+  //           : product
+  //       );
+  //       setScannedProducts(updatedProducts);
+  //     } else {
+  //       // If not in cart, add it with the initial quantity
+  //       setScannedProducts([
+  //         ...scannedProducts,
+  //         { id: productToAdd.id, name: productToAdd.name, qty: qty, price: productToAdd.price },
+  //       ]);
+  //     }
+  //   } else {
+  //     console.error('Product not found');
+  //   }
+  // };
+  
   const addToCart = (productId, qty) => {
-    // Check if the product exists in the inventory
-    const productToAdd = exProd.find((product) => product.id === productId);
-  
-    if (productToAdd) {
-      // Check if it's already in the cart
-      const existingProduct = scannedProducts.find(
-        (product) => product.id === productId
-      );
-  
-      if (existingProduct) {
-        // Create a new array with updated quantity
-        const updatedProducts = scannedProducts.map((product) =>
-          product.id === productId
-            ? { ...product, qty: product.qty + qty }
-            : product
-        );
-        setScannedProducts(updatedProducts);
-      } else {
-        // If not in cart, add it with the initial quantity
-        setScannedProducts([
-          ...scannedProducts,
-          { id: productToAdd.id, name: productToAdd.name, qty: qty, price: productToAdd.price },
-        ]);
-      }
+    const existingProduct = exProd.find(
+      (product) => product.id === productId
+    );
+ 
+    if (existingProduct) {
+      existingProduct.qty += qty;
+      setScannedProducts([...scannedProducts]);
     } else {
       console.error('Product not found');
     }
   };
-  
 
   const handleManualAdd = () => {
     if (manualProductId && manualQty > 0) {
