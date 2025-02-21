@@ -53,32 +53,38 @@ function App() {
   
   const addToCart = (scannedData, qty) => {
     // Check if the product exists in the inventory
-    const productToAdd = exProd.find(
-      (product) => product.id === scannedData.id
-    );
- 
+    const productToAdd = exProd.find((product) => product.id === scannedData);
+  
     if (productToAdd) {
       // Check if it's already in the cart
-      const existingCartProducts = scannedProducts.find(
+      const existingCartProduct = scannedProducts.find(
         (product) => product.id === productToAdd.id
       );
-      if (existingCartProducts) {
-        existingCartProducts.qty += qty;
-        setScannedProducts([...scannedProducts]);
+  
+      if (existingCartProduct) {
+        // Create a new array with updated quantity (avoid mutating state directly)
+        const updatedProducts = scannedProducts.map((product) =>
+          product.id === productToAdd.id
+            ? { ...product, qty: product.qty + qty }
+            : product
+        );
+        setScannedProducts(updatedProducts);
       } else {
+        // If not in cart, add it with the initial quantity
         setScannedProducts([
           ...scannedProducts,
-          { id: productToAdd.id, name: productToAdd.name, qty, price: productToAdd.price },
+          {
+            id: productToAdd.id,
+            name: productToAdd.name,
+            qty,
+            price: productToAdd.price,
+          },
         ]);
       }
     } else {
       console.error('Product not found');
-      // setScannedProducts([
-      //   ...scannedProducts,
-      //   { id: productId.id, name: productId.name, qty, price: productId.price },
-      // ]);
     }
-  };
+  };  
 
   const handleManualAdd = () => {
     if (manualProductId && manualQty > 0) {
