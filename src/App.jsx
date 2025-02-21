@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-//import { QrReader } from 'react-qr-reader';  // Use this import for QR Reader
 import './Styles.css';
 import QRScanner from './QRScanner'; 
 
@@ -21,10 +20,6 @@ function App() {
       addToCart(data, 1);
     }
   };
-
-  //const handleError = (err) => {
-  //  console.error(err);
-  //};
 
   // const addToCart = (productId, qty) => {
   //   // Check if the product exists in the inventory
@@ -68,7 +63,7 @@ function App() {
       //console.error('Product not found');
       setScannedProducts([
         ...scannedProducts,
-        { id: productId, name: `Product ${productId}`, qty, price: 10000 },
+        { id: productId.id, name: productId.name, qty, price: productId.price },
       ]);
     }
   };
@@ -110,33 +105,16 @@ function App() {
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
       {/* <div className="qr-scanner-window">
-      <QrReader
-        delay={300}
-        constraints={{
-          video: {
-            facingMode: 'environment' // Use 'environment' for the back camera
-          }
-        }}
-        onError={handleError}
-        onResult={(result, error) => {
-          if (result) {
-            handleScan(result?.text);
-          }
-          if (error) {
-            console.error(error);
-          }
-        }}
-        style={{ width: '100%' }}
-      />
+ 
       </div> */}
 
-      <div>
+      <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
       <h2>Scanned Products</h2>
       <ul>
         {scannedProducts.map((item, index) => (
-          <li key={index}>{item.id} - Qty: {item.qty}</li>
+          <li key={index}>{item["id"]} {item["product"]} - Qty: {item.qty}</li>
         ))}
       </ul>
       </div>
