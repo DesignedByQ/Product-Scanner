@@ -4,7 +4,7 @@ import './Styles.css';
 import QRScanner from './QRScanner'; 
 
 function App() {
-  const [exProd, setExProd] = useState([
+  const [exProd] = useState([
     { id: '1', name: 'Scrub', qty: 0, price: 18000 },
     { id: '2', name: 'Face Wash', qty: 0, price: 20000 },
     { id: '3', name: 'Perfume', qty: 0, price: 30000 },
