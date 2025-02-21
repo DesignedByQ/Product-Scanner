@@ -146,12 +146,12 @@ function App() {
       <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
-      <h2>Scanned Products</h2>
+      {/* <h2>Scanned Products</h2>
       <ul>
         {scannedProducts.map((item, index) => (
           <li key={index}>{item.id} {item.product} - Qty: {item.qty}</li>
         ))}
-      </ul>
+      </ul> */}
       </div>
 
       <div className="manual-input">
