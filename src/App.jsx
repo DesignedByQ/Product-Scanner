@@ -4,13 +4,20 @@ import './Styles.css';
 import QRScanner from './QRScanner'; 
 
 function App() {
+  const [exProd, setExProd] = useState([
+    { id: '1', name: 'Scrub', qty: 0, price: 18000 },
+    { id: '2', name: 'Face Wash', qty: 0, price: 20000 },
+    { id: '3', name: 'Perfume', qty: 0, price: 30000 },
+  ]);
   const [scannedProducts, setScannedProducts] = useState([]);
   const [manualProductId, setManualProductId] = useState('');
   const [manualQty, setManualQty] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
 
+//add a fall back to send from FE as an email if BE fails
   const handleScan = (data) => {
     if (data) {
+      console.log("Data scanned: ", data);
       addToCart(data, 1);
     }
   };
@@ -20,20 +27,35 @@ function App() {
   };
 
   const addToCart = (productId, qty) => {
-    const existingProduct = scannedProducts.find(
-      (product) => product.id === productId
-    );
-
-    if (existingProduct) {
-      existingProduct.qty += qty;
-      setScannedProducts([...scannedProducts]);
+    // Check if the product exists in the inventory
+    const productToAdd = exProd.find((product) => product.id === productId);
+  
+    if (productToAdd) {
+      // Check if it's already in the cart
+      const existingProduct = scannedProducts.find(
+        (product) => product.id === productId
+      );
+  
+      if (existingProduct) {
+        // Create a new array with updated quantity
+        const updatedProducts = scannedProducts.map((product) =>
+          product.id === productId
+            ? { ...product, qty: product.qty + qty }
+            : product
+        );
+        setScannedProducts(updatedProducts);
+      } else {
+        // If not in cart, add it with the initial quantity
+        setScannedProducts([
+          ...scannedProducts,
+          { id: productToAdd.id, name: productToAdd.name, qty: qty, price: productToAdd.price },
+        ]);
+      }
     } else {
-      setScannedProducts([
-        ...scannedProducts,
-        { id: productId, name: `Product ${productId}`, qty, price: 10000 },
-      ]);
+      console.error('Product not found');
     }
   };
+  
 
   const handleManualAdd = () => {
     if (manualProductId && manualQty > 0) {
@@ -118,7 +140,7 @@ function App() {
           <li key={index}>{item.id} - Qty: {item.qty}</li>
         ))}
       </ul>
-    </div>
+      </div>
 
       <div className="manual-input">
         <h3>Manual input</h3>
