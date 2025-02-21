@@ -1,35 +1,42 @@
 import React, { useEffect, useRef } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
   const scannerRef = useRef(null); // Store the scanner instance
-  const isScannerInitialized = useRef(false); // Track if initialized
+  const isScanning = useRef(false); // Track scanning state
 
   useEffect(() => {
-    // Only initialize once
-    if (!isScannerInitialized.current) {
-      const scanner = new Html5QrcodeScanner('qr-scanner', {
-        fps: 10,
-        qrbox: { width: 250, height: 250 },
-      });
+    const startScanner = async () => {
+      if (!isScanning.current) {
+        const html5QrCode = new Html5Qrcode('qr-scanner');
+        scannerRef.current = html5QrCode;
 
-      scanner.render(
-        (decodedText) => {
-          onScan(decodedText);
-        },
-        (errorMessage) => {
-          console.error('QR scan error:', errorMessage);
+        try {
+          await html5QrCode.start(
+            { facingMode: 'environment' }, // Use back camera
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+            },
+            (decodedText) => {
+              onScan(decodedText); // Pass decoded text to parent
+            },
+            (errorMessage) => {
+              console.error('QR scan error:', errorMessage);
+            }
+          );
+          isScanning.current = true;
+        } catch (error) {
+          console.error('Camera start failed:', error);
         }
-      );
+      }
+    };
 
-      scannerRef.current = scanner;
-      isScannerInitialized.current = true;
-    }
+    startScanner();
 
     return () => {
-      // Only clear when component unmounts, not on every re-render
       if (scannerRef.current) {
-        scannerRef.current.clear();
+        scannerRef.current.stop().catch((err) => console.error('Stop error:', err));
       }
     };
   }, [onScan]);
