@@ -22,9 +22,9 @@ function App() {
     }
   };
 
-  const handleError = (err) => {
-    console.error(err);
-  };
+  //const handleError = (err) => {
+  //  console.error(err);
+  //};
 
   const addToCart = (productId, qty) => {
     // Check if the product exists in the inventory
