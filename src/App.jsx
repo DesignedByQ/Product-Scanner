@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { QrReader } from 'react-qr-reader';  // Use this import for QR Reader
 import './Styles.css';
-import QRScanner from './QRScanner'; 
+//import QRScanner from './QRScanner'; 
 
 function App() {
   const [exProd] = useState([
