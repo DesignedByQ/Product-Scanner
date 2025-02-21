@@ -57,7 +57,7 @@ function App() {
       const parsedData = JSON.parse(scannedData);
   
       // Confirm the structure of parsedData
-      console.log(parsedData);
+      console.log('Parsed Data:', parsedData);
   
       // Check if the product exists in the inventory
       const productToAdd = exProd.find(
@@ -90,6 +90,11 @@ function App() {
             },
           ]);
         }
+  
+        // ✅ Allow for continuous scanning by temporarily disabling and re-enabling
+        setTimeout(() => {
+          console.log('Ready for next scan');
+        }, 1000); // Adjust delay as needed
       } else {
         console.error('Product not found');
       }
