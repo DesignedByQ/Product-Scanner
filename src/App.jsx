@@ -57,15 +57,19 @@ function App() {
   // };
   
   const addToCart = (productId, qty) => {
-    const existingProduct = exProd.find(
+    const existingCartProduct = exProd.find(
       (product) => product.id === productId
     );
  
-    if (existingProduct) {
-      existingProduct.qty += qty;
+    if (existingCartProduct) {
+      existingCartProduct.qty += qty;
       setScannedProducts([...scannedProducts]);
     } else {
-      console.error('Product not found');
+      //console.error('Product not found');
+      setScannedProducts([
+        ...scannedProducts,
+        { id: productId, name: `Product ${productId}`, qty, price: 10000 },
+      ]);
     }
   };
 
