@@ -52,34 +52,51 @@ function App() {
   // };
   
   const addToCart = (scannedData, qty) => {
-    alert(scannedData.id)
-    alert(scannedData)
-    alert(scannedData["id"])
-    const productToAdd = exProd.find(
-      (product) => product.id === scannedData.id
-    );
- 
-    if (productToAdd) {
-      const existingCartProduct = scannedProducts.find(
-        (product) => product.id === scannedData.id
+    try {
+      // Parse the JSON string into an object
+      const parsedData = JSON.parse(scannedData);
+  
+      // Confirm the structure of parsedData
+      console.log(parsedData);
+  
+      // Check if the product exists in the inventory
+      const productToAdd = exProd.find(
+        (product) => product.id === parsedData.id
       );
-      if (existingCartProduct) {
-      productToAdd.qty += qty;
-      setScannedProducts([...scannedProducts]);
+  
+      if (productToAdd) {
+        // Check if it's already in the cart
+        const existingCartProduct = scannedProducts.find(
+          (product) => product.id === productToAdd.id
+        );
+  
+        if (existingCartProduct) {
+          // Create a new array with updated quantity
+          const updatedProducts = scannedProducts.map((product) =>
+            product.id === productToAdd.id
+              ? { ...product, qty: product.qty + qty }
+              : product
+          );
+          setScannedProducts(updatedProducts);
+        } else {
+          // If not in cart, add it with the initial quantity
+          setScannedProducts([
+            ...scannedProducts,
+            {
+              id: parsedData.id,
+              name: parsedData.name,
+              qty,
+              price: parsedData.price,
+            },
+          ]);
+        }
       } else {
-        setScannedProducts([
-          ...scannedProducts,
-          { id: scannedData.id, name: scannedData.name, qty, price: scannedData.price },
-        ]);
+        console.error('Product not found');
       }
-    } else {
-      alert('Product not found');
-      // setScannedProducts([
-      //   ...scannedProducts,
-      //   { id: scannedData.id, name: scannedData.name, qty, price: scannedData.price },
-      // ]);
+    } catch (error) {
+      console.error('Invalid JSON scanned:', error);
     }
-  };
+  };  
 
   const handleManualAdd = () => {
     if (manualProductId && manualQty > 0) {
