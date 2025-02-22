@@ -1,77 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import React, { useEffect, useRef } from 'react';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
-  const html5QrCode = useRef(null);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [scanning, setScanning] = useState(false);
+  const scannerRef = useRef(null);
 
   useEffect(() => {
-    // Initialize Html5Qrcode once
-    if (!html5QrCode.current) {
-      html5QrCode.current = new Html5Qrcode("qr-scanner");
-    }
+    const scanner = new Html5QrcodeScanner('qr-scanner', {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+    });
 
-    return () => {
-      // Cleanup on unmount
-      if (cameraActive) {
-        html5QrCode.current.stop().catch(err => console.error("Camera stop error: ", err));
+    scanner.render(
+      (decodedText) => {
+        onScan(decodedText);
+      },
+      (errorMessage) => {
+        console.error('QR scan error:', errorMessage);
       }
+    );
+
+    scannerRef.current = scanner;
+    return () => {
+      
     };
-  }, [cameraActive]);
+  }, [onScan]);
 
-  const startCamera = () => {
-    if (!cameraActive) {
-      html5QrCode.current
-        .start(
-          { facingMode: "environment" },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
-            if (!scanning) {  // Prevents multiple triggers
-              setScanning(true);
-              onScan(decodedText);
-              console.log("Scanned: ", decodedText);
-              setTimeout(() => setScanning(false), 1500);  // Delay for 1.5 seconds
-            }
-          },
-          (errorMessage) => {
-            console.error('QR scan error:', errorMessage);
-          }
-        )
-        .then(() => {
-          setCameraActive(true);
-        })
-        .catch(err => console.error("Camera start error: ", err));
-    }
-  };
-
-  const stopCamera = () => {
-    if (cameraActive) {
-      html5QrCode.current
-        .stop()
-        .then(() => {
-          setCameraActive(false);
-          html5QrCode.current.clear(); // Clear the scanning area
-        })
-        .catch(err => console.error("Camera stop error: ", err));
-    }
-  };
-
-  return (
-    <div>
-      <div id="qr-scanner" style={{ width: "100%", minHeight: "300px" }}></div>
-      <div>
-        {!cameraActive ? (
-          <button onClick={startCamera}>Start Camera</button>
-        ) : (
-          <button onClick={stopCamera}>Stop Camera</button>
-        )}
-      </div>
-    </div>
-  );
+  return <div id="qr-scanner"></div>;
 }
 
 export default QRScanner;
