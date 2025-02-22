@@ -33,7 +33,6 @@ function QRScanner({ onScan }) {
     return () => {
       // Proper cleanup on component unmount
       scanner.clear();
-      setScanning(true)
     };
   }, [onScan, scanning]);
 
