@@ -135,8 +135,13 @@ function App() {
     setScannedProducts(newProducts);
   };
 
+  const handleFormSubmit = (e) => {
+    e.preventDefault(); // Prevents page reload
+  };  
+
   return (
     <div className="container">
+      <form onSubmit={handleFormSubmit}>
       <h1>
         <span className="brand-name">ELIXIR</span> <br />
         <span className="brand-subtitle">cosmetics</span>
@@ -160,6 +165,7 @@ function App() {
       </div>
 
       <div className="manual-input">
+      
         <h3>Manual input</h3>
         <input
           type="text"
@@ -217,12 +223,15 @@ function App() {
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
+        
       </div>
 
       <div>
         <button type="button" className="buy" onClick={handleBuy}>Buy</button>
       </div>
+      </form>
     </div>
+    
   );
 }
 
