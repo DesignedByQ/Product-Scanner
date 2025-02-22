@@ -151,10 +151,10 @@ function App() {
       <h2>Scan the QR code of each item!</h2>
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
-      <div className="qr-scanner-window">
+      {/* <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
-      </div>
+      </div> */}
 
       <div className="manual-input">
       <form onSubmit={handleManualAdd}>
