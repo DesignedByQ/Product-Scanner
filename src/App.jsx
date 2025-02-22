@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Styles.css';
-import QRScanner from './QRScanner'; 
+//import QRScanner from './QRScanner'; 
 
 function App() {
   const [exProd] = useState([
@@ -14,64 +14,64 @@ function App() {
   const [phoneNumber, setPhoneNumber] = useState('');
 
 //add a fall back to send from FE as an email if BE fails
-  const handleScan = (data) => {
-    if (data) {
-      console.log("Data scanned: ", data);
-      addToCart(data, 1);
-    }
-  };
+  // const handleScan = (data) => {
+  //   if (data) {
+  //     console.log("Data scanned: ", data);
+  //     addToCart(data, 1);
+  //   }
+  // };
   
-  const addToCart = (scannedData, qty) => {
-    try {
-      // Parse the JSON string into an object
-      const parsedData = JSON.parse(scannedData);
+  // const addToCart = (scannedData, qty) => {
+  //   try {
+  //     // Parse the JSON string into an object
+  //     const parsedData = JSON.parse(scannedData);
   
-      // Confirm the structure of parsedData
-      console.log('Parsed Data:', parsedData);
+  //     // Confirm the structure of parsedData
+  //     console.log('Parsed Data:', parsedData);
   
-      // Check if the product exists in the inventory
-      const productToAdd = exProd.find(
-        (product) => product.id === parsedData.id
-      );
+  //     // Check if the product exists in the inventory
+  //     const productToAdd = exProd.find(
+  //       (product) => product.id === parsedData.id
+  //     );
   
-      if (productToAdd) {
-        // Check if it's already in the cart
-        const existingCartProduct = scannedProducts.find(
-          (product) => product.id === productToAdd.id
-        );
+  //     if (productToAdd) {
+  //       // Check if it's already in the cart
+  //       const existingCartProduct = scannedProducts.find(
+  //         (product) => product.id === productToAdd.id
+  //       );
   
-        if (existingCartProduct) {
-          // Create a new array with updated quantity
-          const updatedProducts = scannedProducts.map((product) =>
-            product.id === productToAdd.id
-              ? { ...product, qty: product.qty + qty }
-              : product
-          );
-          setScannedProducts(updatedProducts);
-        } else {
-          // If not in cart, add it with the initial quantity
-          setScannedProducts([
-            ...scannedProducts,
-            {
-              id: parsedData.id,
-              name: parsedData.name,
-              qty,
-              price: parsedData.price,
-            },
-          ]);
-        }
+  //       if (existingCartProduct) {
+  //         // Create a new array with updated quantity
+  //         const updatedProducts = scannedProducts.map((product) =>
+  //           product.id === productToAdd.id
+  //             ? { ...product, qty: product.qty + qty }
+  //             : product
+  //         );
+  //         setScannedProducts(updatedProducts);
+  //       } else {
+  //         // If not in cart, add it with the initial quantity
+  //         setScannedProducts([
+  //           ...scannedProducts,
+  //           {
+  //             id: parsedData.id,
+  //             name: parsedData.name,
+  //             qty,
+  //             price: parsedData.price,
+  //           },
+  //         ]);
+  //       }
   
-        // ✅ Allow for continuous scanning by temporarily disabling and re-enabling
-        setTimeout(() => {
-          console.log('Ready for next scan');
-        }, 1000); // Adjust delay as needed
-      } else {
-        console.error('Product not found');
-      }
-    } catch (error) {
-      console.error('Invalid JSON scanned:', error);
-    }
-  }; 
+  //       // ✅ Allow for continuous scanning by temporarily disabling and re-enabling
+  //       setTimeout(() => {
+  //         console.log('Ready for next scan');
+  //       }, 1000); // Adjust delay as needed
+  //     } else {
+  //       console.error('Product not found');
+  //     }
+  //   } catch (error) {
+  //     console.error('Invalid JSON scanned:', error);
+  //   }
+  // }; 
   
   const manualAddToCart = (id, qty) => {
     // Check if the product exists in the inventory
