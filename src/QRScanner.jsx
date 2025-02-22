@@ -1,51 +1,55 @@
 import React, { useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
   const scannerRef = useRef(null);
+  const html5QrCode = useRef(null);
 
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode('qr-scanner');
-    scannerRef.current = html5QrCode;
+    html5QrCode.current = new Html5Qrcode("qr-scanner");
 
-    const startScanner = async () => {
-      try {
-        await html5QrCode.start(
-          { facingMode: 'environment' },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
-          (decodedText) => {
-            onScan(decodedText); // Handle scanned text
+    const scanner = new Html5QrcodeScanner('qr-scanner', {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+    });
 
-            // Pause and restart to allow continuous scanning
-            html5QrCode.pause();
-            setTimeout(() => {
-              html5QrCode.resume().catch((err) => {
-                console.error('Resume failed:', err);
-              });
-            }, 500); // Adjust delay for smoother scanning
-          },
-          (errorMessage) => {
-            console.error('QR scan error:', errorMessage);
-          }
-        );
-      } catch (err) {
-        console.error('Camera start failed:', err);
+    scanner.render(
+      (decodedText) => {
+        onScan(decodedText);
+      },
+      (errorMessage) => {
+        console.error('QR scan error:', errorMessage);
       }
-    };
+    );
 
-    startScanner();
-
+    scannerRef.current = scanner;
     return () => {
-      html5QrCode.stop().catch((err) => {
-        console.error('Stop failed:', err);
-      });
+      scanner.clear();
     };
   }, [onScan]);
 
-  return <div id="qr-scanner"></div>;
+  const startCamera = () => {
+    html5QrCode.current.start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+      },
+      (decodedText) => {
+        onScan(decodedText);
+      }
+    ).catch(err => console.error("Camera start error: ", err));
+  };
+
+  const stopCamera = () => {
+    html5QrCode.current.stop().catch(err => console.error("Camera stop error: ", err));
+  };
+
+  return (
+    <div>
+      <div id="qr-scanner"></div>
+    </div>
+  );
 }
 
 export default QRScanner;
