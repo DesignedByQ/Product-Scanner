@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Styles.css';
 import QRScanner from './QRScanner'; 
 
@@ -12,36 +12,6 @@ function App() {
   const [manualProductId, setManualProductId] = useState('');
   const [manualQty, setManualQty] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
-
-  // Add useRef for the QRScanner component
-  const qrScannerRef = useRef(null);
-
-  // Function to handle when an input field is focused
-  const handleFocus = () => {
-    qrScannerRef.current.stopCamera();
-  };
-
-  // Function to handle when an input field loses focus
-  const handleBlur = () => {
-    qrScannerRef.current.startCamera();
-  };
-
-  useEffect(() => {
-    // Get all input fields and add event listeners
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-      input.addEventListener('focus', handleFocus);
-      input.addEventListener('blur', handleBlur);
-    });
-
-    // Cleanup event listeners on unmount
-    return () => {
-      inputs.forEach(input => {
-        input.removeEventListener('focus', handleFocus);
-        input.removeEventListener('blur', handleBlur);
-      });
-    };
-  }, []);
 
 //add a fall back to send from FE as an email if BE fails
   const handleScan = (data) => {
@@ -185,7 +155,7 @@ function App() {
 
       <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
-      <QRScanner ref={qrScannerRef} onScan={handleScan} />
+      <QRScanner onScan={handleScan} />
       </div>
 
       <div className="manual-input">
