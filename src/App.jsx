@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Styles.css';
-//import QRScanner from './QRScanner'; 
+import QRScanner from './QRScanner'; 
 
 function App() {
   const [exProd] = useState([
@@ -13,65 +13,97 @@ function App() {
   const [manualQty, setManualQty] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  // Add useRef for the QRScanner component
+  const qrScannerRef = useRef(null);
+
+  // Function to handle when an input field is focused
+  const handleFocus = () => {
+    qrScannerRef.current.stopCamera();
+  };
+
+  // Function to handle when an input field loses focus
+  const handleBlur = () => {
+    qrScannerRef.current.startCamera();
+  };
+
+  useEffect(() => {
+    // Get all input fields and add event listeners
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', handleFocus);
+      input.addEventListener('blur', handleBlur);
+    });
+
+    // Cleanup event listeners on unmount
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener('focus', handleFocus);
+        input.removeEventListener('blur', handleBlur);
+      });
+    };
+  }, []);
+
 //add a fall back to send from FE as an email if BE fails
-  // const handleScan = (data) => {
-  //   if (data) {
-  //     console.log("Data scanned: ", data);
-  //     addToCart(data, 1);
-  //   }
-  // };
+  const handleScan = (data) => {
+    if (data) {
+      console.log("Data scanned: ", data);
+      addToCart(data, 1);
+    }
+  };
   
-  // const addToCart = (scannedData, qty) => {
-  //   try {
-  //     // Parse the JSON string into an object
-  //     const parsedData = JSON.parse(scannedData);
+  const addToCart = (scannedData, qty) => {
+    try {
+      // Parse the JSON string into an object
+      const parsedData = JSON.parse(scannedData);
   
-  //     // Confirm the structure of parsedData
-  //     console.log('Parsed Data:', parsedData);
+      // Confirm the structure of parsedData
+      console.log('Parsed Data:', parsedData);
   
-  //     // Check if the product exists in the inventory
-  //     const productToAdd = exProd.find(
-  //       (product) => product.id === parsedData.id
-  //     );
+      // Check if the product exists in the inventory
+      const productToAdd = exProd.find(
+        (product) => product.id === parsedData.id
+      );
   
-  //     if (productToAdd) {
-  //       // Check if it's already in the cart
-  //       const existingCartProduct = scannedProducts.find(
-  //         (product) => product.id === productToAdd.id
-  //       );
+      if (productToAdd) {
+        // Check if it's already in the cart
+        const existingCartProduct = scannedProducts.find(
+          (product) => product.id === productToAdd.id
+        );
   
-  //       if (existingCartProduct) {
-  //         // Create a new array with updated quantity
-  //         const updatedProducts = scannedProducts.map((product) =>
-  //           product.id === productToAdd.id
-  //             ? { ...product, qty: product.qty + qty }
-  //             : product
-  //         );
-  //         setScannedProducts(updatedProducts);
-  //       } else {
-  //         // If not in cart, add it with the initial quantity
-  //         setScannedProducts([
-  //           ...scannedProducts,
-  //           {
-  //             id: parsedData.id,
-  //             name: parsedData.name,
-  //             qty,
-  //             price: parsedData.price,
-  //           },
-  //         ]);
-  //       }
+        if (existingCartProduct) {
+          // Create a new array with updated quantity
+          const updatedProducts = scannedProducts.map((product) =>
+            product.id === productToAdd.id
+              ? { ...product, qty: product.qty + qty }
+              : product
+          );
+          setScannedProducts(updatedProducts);
+        } else {
+          // If not in cart, add it with the initial quantity
+          setScannedProducts([
+            ...scannedProducts,
+            {
+              id: parsedData.id,
+              name: parsedData.name,
+              qty,
+              price: parsedData.price,
+            },
+          ]);
+        }
   
-  //       // ✅ Allow for continuous scanning by temporarily disabling and re-enabling
-  //       setTimeout(() => {
-  //         console.log('Ready for next scan');
-  //       }, 1000); // Adjust delay as needed
-  //     } else {
-  //       console.error('Product not found');
-  //     }
-  //   } catch (error) {
-  //     console.error('Invalid JSON scanned:', error);
-  //   }
-  // }; 
+        // ✅ Allow for continuous scanning by temporarily disabling and re-enabling
+        setTimeout(() => {
+          console.log('Ready for next scan');
+        }, 1000); // Adjust delay as needed
+      } else {
+        alert('Product not found');
+        console.error('Product not found');
+      }
+    } catch (error) {
+      alert('Invalid JSON scanned:', error);
+      console.error('Invalid JSON scanned:', error);
+    }
+  }; 
   
   const manualAddToCart = (id, qty) => {
     // Check if the product exists in the inventory
@@ -151,13 +183,13 @@ function App() {
       <h2>Scan the QR code of each item!</h2>
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
-      {/* <div className="qr-scanner-window">
+      <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
-      <QRScanner onScan={handleScan} />
-      </div> */}
+      <QRScanner ref={qrScannerRef} onScan={handleScan} />
+      </div>
 
       <div className="manual-input">
-      <form onSubmit={handleManualAdd}>
+      
         <h3>Manual input</h3>
         <input
           type="text"
@@ -171,7 +203,7 @@ function App() {
           value={manualQty}
           onChange={(e) => setManualQty(e.target.value)}
         />
-        </form>
+        
         <button onClick={handleManualAdd}>Add to cart</button>
       </div>
       
@@ -210,7 +242,7 @@ function App() {
       <h3 className="total-cost">Total Cost: {calculateTotal()} TZS</h3>
 
       <div className="manual-input">
-      <form onSubmit={handleBuy}>
+      
         <label>Customers Phone No. </label>
         <input
           type="text"
@@ -218,11 +250,11 @@ function App() {
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
-        </form>
+        
       </div>
 
       <div>
-        <button type="button" className="buy" onClick={handleBuy}>Buy</button>
+        <button className="buy" onClick={handleBuy}>Buy</button>
       </div>
      
     </div>
