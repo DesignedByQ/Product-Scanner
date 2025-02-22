@@ -21,7 +21,7 @@ function QRScanner({ onScan }) {
 
     scannerRef.current = scanner;
     return () => {
-      //scanner.clear();
+      scanner.clear();
     };
   }, [onScan]);
 
