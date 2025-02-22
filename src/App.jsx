@@ -66,48 +66,52 @@ function App() {
           console.log('Ready for next scan');
         }, 1000); // Adjust delay as needed
       } else {
-        alert('Product not found');
         console.error('Product not found');
       }
     } catch (error) {
-      alert('Invalid JSON scanned:', error);
       console.error('Invalid JSON scanned:', error);
     }
   }; 
   
-  const handleManualAdd = (e) => {
-    e.preventDefault();
-    if (manualProductId && manualQty > 0) {
-      const productToAdd = exProd.find(
-        (product) => product.id === manualProductId
+  const manualAddToCart = (id, qty) => {
+    // Check if the product exists in the inventory
+    const productToAdd = exProd.find((product) => product.id === id);
+  
+    if (productToAdd) {
+      // Check if it's already in the cart
+      const existingCartProduct = scannedProducts.find(
+        (product) => product.id === id
       );
-      if (productToAdd) {
-        const existingCartProduct = scannedProducts.find(
-          (product) => product.id === productToAdd.id
+  
+      if (existingCartProduct) {
+        // If it's already in the cart, update the quantity
+        const updatedProducts = scannedProducts.map((product) =>
+          product.id === id
+            ? { ...product, qty: product.qty + qty }
+            : product
         );
-
-        if (existingCartProduct) {
-          const updatedProducts = scannedProducts.map((product) =>
-            product.id === productToAdd.id
-              ? { ...product, qty: product.qty + parseInt(manualQty) }
-              : product
-          );
-          setScannedProducts(updatedProducts);
-        } else {
-          setScannedProducts([
-            ...scannedProducts,
-            {
-              id: productToAdd.id,
-              name: productToAdd.name,
-              qty: parseInt(manualQty),
-              price: productToAdd.price,
-            },
-          ]);
-        }
+        setScannedProducts(updatedProducts);
       } else {
-        alert('Product not found in inventory');
+        // If not in cart, add it with the initial quantity
+        setScannedProducts([
+          ...scannedProducts,
+          {
+            id: productToAdd.id,
+            name: productToAdd.name,
+            qty,
+            price: productToAdd.price,
+          },
+        ]);
       }
-
+    } else {
+      alert('Product not found in inventory');
+    }
+  };
+  
+  const handleManualAdd = (e) => {
+    e.preventDefault(); // Prevents page reload
+    if (manualProductId && manualQty > 0) {
+      manualAddToCart(manualProductId, parseInt(manualQty));
       setManualProductId('');
       setManualQty(1);
     }
