@@ -108,7 +108,8 @@ function App() {
     }
   };
   
-  const handleManualAdd = () => {
+  const handleManualAdd = (e) => {
+    e.preventDefault(); // Prevents page reload
     if (manualProductId && manualQty > 0) {
       manualAddToCart(manualProductId, parseInt(manualQty));
       setManualProductId('');
@@ -123,7 +124,8 @@ function App() {
     );
   };
 
-  const handleBuy = () => {
+  const handleBuy = (e) => {
+    e.preventDefault(); // Prevents page reload
     alert(`Purchase Successful! Total: ${calculateTotal()} TZS`);
     setScannedProducts([]);
     setPhoneNumber('');
@@ -135,13 +137,13 @@ function App() {
     setScannedProducts(newProducts);
   };
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevents page reload
-  };  
+  // const handleFormSubmit = (e) => {
+  //   e.preventDefault(); // Prevents page reload
+  // };  
 
   return (
     <div className="container">
-      <form onSubmit={handleFormSubmit}>
+      
       <h1>
         <span className="brand-name">ELIXIR</span> <br />
         <span className="brand-subtitle">cosmetics</span>
@@ -149,23 +151,13 @@ function App() {
       <h2>Scan the QR code of each item!</h2>
       <h3>Changanua msimbo wa QR wa kila kitu!</h3>
 
-      {/* <div className="qr-scanner-window">
- 
-      </div> */}
-
       <div className="qr-scanner-window">
       <h1>QR Code Scanner</h1>
       <QRScanner onScan={handleScan} />
-      {/* <h2>Scanned Products</h2>
-      <ul>
-        {scannedProducts.map((item, index) => (
-          <li key={index}>{item.id} {item.product} - Qty: {item.qty}</li>
-        ))}
-      </ul> */}
       </div>
 
       <div className="manual-input">
-      
+      <form onSubmit={handleManualAdd}>
         <h3>Manual input</h3>
         <input
           type="text"
@@ -179,8 +171,10 @@ function App() {
           value={manualQty}
           onChange={(e) => setManualQty(e.target.value)}
         />
+        </form>
         <button onClick={handleManualAdd}>Add to cart</button>
       </div>
+      
 
       <h2>Cart</h2>
       <table className="cart-table">
@@ -216,6 +210,7 @@ function App() {
       <h3 className="total-cost">Total Cost: {calculateTotal()} TZS</h3>
 
       <div className="manual-input">
+      <form onSubmit={handleBuy}>
         <label>Customers Phone No. </label>
         <input
           type="text"
@@ -223,13 +218,13 @@ function App() {
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
         />
-        
+        </form>
       </div>
 
       <div>
         <button type="button" className="buy" onClick={handleBuy}>Buy</button>
       </div>
-      </form>
+     
     </div>
     
   );
