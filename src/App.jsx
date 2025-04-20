@@ -8,10 +8,20 @@ function App() {
     { id: '2', name: 'Face Wash', qty: 0, price: 20000 },
     { id: '3', name: 'Perfume', qty: 0, price: 30000 },
   ]);
+  const [errorMessage, setErrorMessage] = useState('');
   const [scannedProducts, setScannedProducts] = useState([]);
   const [manualProductId, setManualProductId] = useState('');
   const [manualQty, setManualQty] = useState(1);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [customer, setCustomer] = useState({
+    phone: "", 
+    name: "", 
+    email: "",
+    area: "" 
+  });
+  const [delivery, setDelivery] = useState('N');
+  const [payment, setPayment] = useState('Cash');
+  const [location, setLocation] = useState('Sinza');
+  const [discount, setDiscount] = useState(0);
 
 //add a fall back to send from FE as an email if BE fails
   const handleScan = (data) => {
@@ -105,6 +115,7 @@ function App() {
       }
     } else {
       alert('Product not found in inventory');
+      console.error('Product not found');
     }
   };
   
@@ -124,12 +135,110 @@ function App() {
     );
   };
 
-  const handleBuy = (e) => {
+  const convertJsonToCsv = (data) => {
+    // Define the CSV headers
+    const headers = ['Phone', 'Product ID', 'Product Name', 'Quantity', 'Price', 'Total Cost'];
+    //console.log('Data:', data.products.map(product =>product.name));
+    // Map JSON to CSV rows
+    const rows = data.products.map(product => [
+      data.customer.phone,
+      product.id,
+      product.name,
+      product.qty,
+      product.price,
+      data.total,
+      data.delivery,
+      data.payment,
+      data.location,
+      data.discount
+    ]);
+  
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(','), 
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+  
+    return csvContent;
+  };  
+
+  const handleBuy = async (e) => {
     e.preventDefault(); // Prevents page reload
-    alert(`Purchase Successful! Total: ${calculateTotal()} TZS`);
-    setScannedProducts([]);
-    setPhoneNumber('');
-  };
+  
+    const purchaseData = {
+      customer: customer,
+      products: scannedProducts,
+      total: calculateTotal(),//.toString(), // Ensure it's a string
+      delivery: delivery,
+      payment: payment,
+      date: new Date().toISOString(),
+      location: location,
+      discount: parseInt(discount)
+    };
+
+    console.log('Purchase Data:', purchaseData);
+
+    // The regex checks for a Tanzanian phone number starting with '0' followed by 9 digits
+    // Example: 0751234567
+    const phoneRegex = /^0[0-9]{9}$/;
+
+    // Check if the input matches the required format
+    if (phoneRegex.test(customer.phone)) {
+  
+      try {
+        const response = await fetch('http://localhost:2000/elixir/scanner', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(purchaseData),
+        });
+    
+        if (!response.ok) {
+
+          throw new Error('Network response was not ok');
+
+        }
+    
+        const data = await response.json();
+        console.log('Success:', data);
+        setErrorMessage('');
+        alert(`Purchase Successful! Total: ${calculateTotal()} TZS`);
+    
+        // Clear the form after a successful purchase
+        setScannedProducts([]);
+        setCustomer({
+          phone: "", 
+          name: "", 
+          email: "",
+          area: "" 
+        });
+    
+      } catch (error) {
+        // Convert JSON to CSV
+        const csvData = convertJsonToCsv(purchaseData);
+
+        // Create a Blob and download the file
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('href', url);
+        const filename = `purchase_${Date.now()}.csv`;
+        a.setAttribute('download', filename);
+        a.click();
+
+        console.error('Error:', error);
+
+        alert(`Purchase details failed to send but has been saved to your phone as ${filename}.Please send this to Majna via WhatsApp or email.`);
+      }
+
+    }
+    else {
+      setErrorMessage("Invalid phone number format. Please enter a valid phone number");
+      console.error(errorMessage);
+      alert('Invalid phone number. Please enter a valid phone number');
+    }
+  };  
 
   const handleDelete = (index) => {
     const newProducts = [...scannedProducts];
@@ -206,15 +315,67 @@ function App() {
       <h3 className="total-cost">Total Cost: {calculateTotal()} TZS</h3>
 
       <div className="manual-input">
-      
         <label>Customers Phone No. </label>
         <input
           type="text"
           placeholder="Phone Number"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          value={customer.phone}
+          onChange={(e) =>
+            setCustomer((prevCustomer) => ({
+              ...prevCustomer,
+              phone: e.target.value
+            }))
+          }
         />
-        
+      </div>
+      {errorMessage && <p className='errorMsg'>{errorMessage}</p>}
+
+      <div className="manual-input">
+        <label>Delivery Option: </label>
+        <select
+          value={delivery}
+          onChange={(e) => setDelivery(e.target.value)}
+        >
+          <option value="N">Shop</option>
+          <option value="Y">Boda</option>
+        </select>
+      </div>
+      
+      <div className="manual-input">
+        <label>Payment Option: </label>
+        <select
+          value={payment}
+          onChange={(e) => setPayment(e.target.value)}
+        >
+          <option value="Cash">Cash</option>
+          <option value="Mpesa">Mpesa</option>
+        </select>
+      </div>
+
+      <div className="manual-input">
+        <label>Location Option: </label>
+        <select
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        >
+          <option value="Sinza">Sinza</option>
+          <option value="TBC">TBC</option>
+        </select>
+      </div>
+
+      <div className="manual-input">
+        <label>Discount Option: </label>
+        <select
+          value={discount}
+          onChange={(e) => setDiscount(e.target.value)}
+        >
+          <option value="0">0</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
       </div>
 
       <div>

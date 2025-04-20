@@ -128,3 +128,8 @@ body {
     cursor: pointer;
     font-weight: bold;
   }
+
+  .errorMsg {
+    color: red;
+    font-weight: bold;
+  }
