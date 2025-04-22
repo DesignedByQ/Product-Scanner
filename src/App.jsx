@@ -4,9 +4,9 @@ import QRScanner from './QRScanner';
 
 function App() {
   const [exProd] = useState([
-    { id: '1', name: 'Scrub', qty: 0, price: 18000 },
-    { id: '2', name: 'Face Wash', qty: 0, price: 20000 },
-    { id: '3', name: 'Perfume', qty: 0, price: 30000 },
+    { prod_id: '1', name: 'Scrub', qty: 0, act_ingredient: 'Coffee', millilitres: 300, brand: 'Brembo', price: 18000 },
+    { prod_id: '2', name: 'Face Wash', qty: 0, act_ingredient: 'Tea Tree', millilitres: 250, brand: 'Elixir', price: 20000 },
+    { prod_id: '3', name: 'Perfume', qty: 0, act_ingredient: 'Fragrance Oil', millilitres: 150, brand: 'Elixir', price: 30000 },
   ]);
   const [errorMessage, setErrorMessage] = useState('');
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -41,19 +41,19 @@ function App() {
   
       // Check if the product exists in the inventory
       const productToAdd = exProd.find(
-        (product) => product.id === parsedData.id
+        (product) => product.prod_id === parsedData.prod_id
       );
   
       if (productToAdd) {
         // Check if it's already in the cart
         const existingCartProduct = scannedProducts.find(
-          (product) => product.id === productToAdd.id
+          (product) => product.prod_id === productToAdd.prod_id
         );
   
         if (existingCartProduct) {
           // Create a new array with updated quantity
           const updatedProducts = scannedProducts.map((product) =>
-            product.id === productToAdd.id
+            product.prod_id === productToAdd.prod_id
               ? { ...product, qty: product.qty + qty }
               : product
           );
@@ -63,10 +63,13 @@ function App() {
           setScannedProducts([
             ...scannedProducts,
             {
-              id: parsedData.id,
+              prod_id: parsedData.prod_id,
               name: parsedData.name,
               qty,
               price: parsedData.price,
+              act_ingredient: parsedData.act_ingredient,
+              millilitres: parsedData.millilitres,
+              brand: parsedData.brand,
             },
           ]);
         }
@@ -83,20 +86,20 @@ function App() {
     }
   }; 
   
-  const manualAddToCart = (id, qty) => {
+  const manualAddToCart = (prod_id, qty) => {
     // Check if the product exists in the inventory
-    const productToAdd = exProd.find((product) => product.id === id);
+    const productToAdd = exProd.find((product) => product.prod_id === prod_id);
   
     if (productToAdd) {
       // Check if it's already in the cart
       const existingCartProduct = scannedProducts.find(
-        (product) => product.id === id
+        (product) => product.prod_id === prod_id
       );
   
       if (existingCartProduct) {
         // If it's already in the cart, update the quantity
         const updatedProducts = scannedProducts.map((product) =>
-          product.id === id
+          product.prod_id === prod_id
             ? { ...product, qty: product.qty + qty }
             : product
         );
@@ -106,10 +109,13 @@ function App() {
         setScannedProducts([
           ...scannedProducts,
           {
-            id: productToAdd.id,
+            prod_id: productToAdd.prod_id,
             name: productToAdd.name,
             qty,
             price: productToAdd.price,
+            act_ingredient: productToAdd.act_ingredient,
+            millilitres: productToAdd.millilitres,
+            brand: productToAdd.brand,
           },
         ]);
       }
@@ -130,7 +136,7 @@ function App() {
   
   const calculateTotal = () => {
     return scannedProducts.reduce(
-      (total, product) => total + product.qty * product.price,
+      (total, product) => total + (product.qty * product.price) - (product.qty * product.price * discount / 100),
       0
     );
   };
@@ -142,7 +148,7 @@ function App() {
     // Map JSON to CSV rows
     const rows = data.products.map(product => [
       data.customer.phone,
-      product.id,
+      product.prod_id,
       product.name,
       product.qty,
       product.price,
@@ -295,7 +301,7 @@ function App() {
         <tbody>
           {scannedProducts.map((item, index) => (
             <tr key={index}>
-              <td>{item.id}</td>
+              <td>{item.prod_id}</td>
               <td>{item.name}</td>
               <td>{item.qty}</td>
               <td>{item.price}</td>
