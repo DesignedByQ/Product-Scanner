@@ -191,10 +191,10 @@ function App() {
 
     // Check if the input matches the required format
     if (phoneRegex.test(customer.phone)) {
-      
+
   // http://localhost:2000/brownskincosmetics/scanner
       try {
-        const response = await fetch('https://app.netlify.com/projects/brownskincosmetics/deploys', {
+        const response = await fetch('https://brownskincosmetics.netlify.app', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
