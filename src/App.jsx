@@ -7,6 +7,7 @@ function App() {
     { prod_id: '1', name: 'Scrub', qty: 0, act_ingredient: 'Coffee', millilitres: 300, brand: 'Brembo', price: 18000 },
     { prod_id: '2', name: 'Face Wash', qty: 0, act_ingredient: 'Tea Tree', millilitres: 250, brand: 'Elixir', price: 20000 },
     { prod_id: '3', name: 'Perfume', qty: 0, act_ingredient: 'Fragrance Oil', millilitres: 150, brand: 'Elixir', price: 30000 },
+    //{ prod_id: '3', name: 'Perfume', qty: 0, act_ingredient: 'Fragrance Oil', millilitres: 150, brand: 'Elixir', price: 30000 },
   ]);
   const [errorMessage, setErrorMessage] = useState('');
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -190,9 +191,10 @@ function App() {
 
     // Check if the input matches the required format
     if (phoneRegex.test(customer.phone)) {
-  
+      
+  // http://localhost:2000/brownskincosmetics/scanner
       try {
-        const response = await fetch('http://localhost:2000/elixir/scanner', {
+        const response = await fetch('https://app.netlify.com/projects/brownskincosmetics/deploys', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
