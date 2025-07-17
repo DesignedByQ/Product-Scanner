@@ -194,7 +194,7 @@ function App() {
 
   // http://localhost:2000/brownskincosmetics/scanner
       try {
-        const response = await fetch('https://brownskincosmetics.netlify.app', {
+        const response = await fetch('https://product-scanner-be-production.up.railway.app', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
