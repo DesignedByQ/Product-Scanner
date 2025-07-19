@@ -4,10 +4,25 @@ import QRScanner from './QRScanner';
 
 function App() {
   const [exProd] = useState([
-    { prod_id: '1', name: 'Scrub', qty: 0, act_ingredient: 'Coffee', millilitres: 300, brand: 'Brembo', price: 18000 },
-    { prod_id: '2', name: 'Face Wash', qty: 0, act_ingredient: 'Tea Tree', millilitres: 250, brand: 'Elixir', price: 20000 },
-    { prod_id: '3', name: 'Perfume', qty: 0, act_ingredient: 'Fragrance Oil', millilitres: 150, brand: 'Elixir', price: 30000 },
-    //{ prod_id: '3', name: 'Perfume', qty: 0, act_ingredient: 'Fragrance Oil', millilitres: 150, brand: 'Elixir', price: 30000 },
+    { prod_id: '1', name: 'Hand & Nail Oil', qty: 0, act_ingredient: 'Avocado Oil, Argan Oil, Tea Tree, Shea Butter, Jasmine', millilitres: 120, brand: 'Serene', price: 10000, type: 'Handcream' },
+    { prod_id: '2', name: 'Rose Shower Gel', qty: 0, act_ingredient: 'Rose Oil', millilitres: 250, brand: 'Serene', price: 15000, type: 'Shower Gel' },
+    { prod_id: '3', name: 'Mango Body Butter', qty: 0, act_ingredient: 'Shea Butter, Mango Butter', millilitres: 250, brand: 'Serene', price: 20000, type: 'Body Butter' },
+    { prod_id: '4', name: 'Glimpse of Gold', qty: 0, act_ingredient: 'Jasmin', millilitres: 50, brand: 'Elixir', price: 50000, type: 'Eau De Perfume' },
+    { prod_id: '5', name: 'Secret Garden', qty: 0, act_ingredient: 'Apple Scent', millilitres: 50, brand: 'Elixir', price: 50000, type: 'Eau De Perfume' },
+    { prod_id: '6', name: 'Forbidden Kiss', qty: 0, act_ingredient: 'Vanilla Scent, Blackcurrant Scent, Floral Scent', millilitres: 50, brand: 'Elixir', price: 50000, type: 'Eau De Perfume' },
+    { prod_id: '7', name: 'Forbidden Kiss', qty: 0, act_ingredient: 'Vanilla Scent, Blackcurrant Scent, Floral Scent', millilitres: 30, brand: 'Elixir', price: 30000, type: 'Eau De Perfume' },
+    { prod_id: '8', name: 'Candy', qty: 0, act_ingredient: 'Bubble Gum Scent', millilitres: 30, brand: 'Elixir', price: 30000, type: 'Eau De Perfume' },
+    { prod_id: '9', name: 'Vanilla Swish', qty: 0, act_ingredient: 'Vanilla Scent', millilitres: 50, brand: 'Elixir', price: 30000, type: 'Oil Perfume' },
+    { prod_id: '10', name: 'Coffee Scrub', qty: 0, act_ingredient: 'Coffee', millilitres: 250, brand: 'Brembo', price: 18000, type: 'Scrub' },
+    { prod_id: '11', name: 'Magic Soa', qty: 0, act_ingredient: 'Cinnamon', millilitres: 100, brand: 'Brembo', price: 10000, type: 'Soap' },
+    { prod_id: '12', name: 'Rose Night Cream', qty: 0, act_ingredient: 'Rose Petal', millilitres: 150, brand: 'Brembo', price: 30000, type: 'Night Cream' }, 
+    { prod_id: '13', name: 'W.Lotion', qty: 0, act_ingredient: 'Rice', millilitres: 200, brand: 'Brembo', price: 30000, type: 'Body Lotion' },
+    { prod_id: '14', name: 'Vit C Toner', qty: 0, act_ingredient: 'Vitamin C', millilitres: 150, brand: 'Brembo', price: 20000, type: 'Toner' },
+    { prod_id: '15', name: 'Orange Cleanser', qty: 0, act_ingredient: 'Orange Peels', millilitres: 150, brand: 'Brembo', price: 25000, type: 'Cleanser' },
+    { prod_id: '9', name: 'Lemongrass Serum', qty: 0, act_ingredient: 'Lemongrass', millilitres: 30, brand: 'Brembo', price: 30000, type: 'Serum' },
+    { prod_id: '10', name: 'Bridal Lotion', qty: 0, act_ingredient: 'Pomegranate', millilitres: 250, brand: 'Brembo', price: 75000, type: 'Lotion' },
+    { prod_id: '11', name: 'Herbal Soap', qty: 0, act_ingredient: 'Pangusa', millilitres: 200, brand: 'Brembo', price: 15000, type: 'Soap' },
+    { prod_id: '12', name: 'Natural Acne Lotion', qty: 0, act_ingredient: 'Lemon', millilitres: 250, brand: 'Brembo', price: 25000, type: 'Face Lotion' },
   ]);
   const [errorMessage, setErrorMessage] = useState('');
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -71,6 +86,7 @@ function App() {
               act_ingredient: parsedData.act_ingredient,
               millilitres: parsedData.millilitres,
               brand: parsedData.brand,
+              type: parsedData.type,
             },
           ]);
         }
@@ -117,6 +133,7 @@ function App() {
             act_ingredient: productToAdd.act_ingredient,
             millilitres: productToAdd.millilitres,
             brand: productToAdd.brand,
+            type: productToAdd.type,
           },
         ]);
       }
@@ -153,6 +170,7 @@ function App() {
       product.name,
       product.qty,
       product.price,
+      product.type,
       data.total,
       data.delivery,
       data.payment,
