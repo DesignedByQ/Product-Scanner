@@ -1,4 +1,5 @@
-mport { Html5Qrcode } from 'html5-qrcode';
+import { useEffect } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
   const scannerRef = useRef(null); // Store the scanner instance
