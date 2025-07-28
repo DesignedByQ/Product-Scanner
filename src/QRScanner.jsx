@@ -17,10 +17,10 @@ function QRScanner({ onScan }) {
       (result) => {
         if (!scanning) {
           setScanning(true);
-          onScan(result.data); // Pass scanned QR data to App
+          onScan(result.data);
           console.log("Scanned QR Data:", result.data);
 
-          // Allow new scans after a short pause
+          // Reset scanning flag after a short delay
           setTimeout(() => setScanning(false), 1500);
         }
       },
@@ -36,11 +36,13 @@ function QRScanner({ onScan }) {
 
     scannerRef.current = scanner;
 
+    // cleanup on unmount
     return () => {
       scanner.stop();
       scanner.destroy();
     };
-  }, [onScan, scanning]);
+  // ⚡ only run once when mounted
+  }, [onScan]);  
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
@@ -58,4 +60,3 @@ function QRScanner({ onScan }) {
 }
 
 export default QRScanner;
-
