@@ -20,7 +20,7 @@ function QRScanner({ onScan }) {
         if (!isPaused && onScanRef.current) {
           onScanRef.current(result.data);
           console.log("Scanned:", result.data);
-          setIsPaused(true); // auto-pause after a scan
+          setIsPaused(true); // auto-pause after scan
           scanner.stop(); // explicitly stop stream on iOS
         }
       },
@@ -59,11 +59,15 @@ function QRScanner({ onScan }) {
     <div style={{ width: "100%", textAlign: "center" }}>
       <video
         ref={videoRef}
+        playsInline // important for iOS Safari
+        muted
+        autoPlay
         style={{
           width: "100%",
           maxWidth: "400px",
           border: "2px solid #ccc",
-          borderRadius: "10px"
+          borderRadius: "10px",
+          backgroundColor: "black" // avoids white blank screen
         }}
       />
       {isPaused && (
