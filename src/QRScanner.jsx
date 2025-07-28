@@ -39,11 +39,12 @@ function QRScanner({ onScan }) {
 
     return () => {
       scanner.stop();
+      scanner.destroy();
       scanner.start();
       //scanner.destroy();
       //scanner.clear()
     };
-  }, [onScan]);
+  }, [onScan, scanning]);
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
