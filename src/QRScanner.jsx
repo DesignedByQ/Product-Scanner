@@ -77,7 +77,7 @@ function QRScanner({ onScan }) {
       }
     };
     // Re-run the effect if the camera's state changes
-  }, [isCameraOn, onScan, isProcessing]);
+  }, [isCameraOn, onScan]);
 
   const handleToggleCamera = () => {
     setIsCameraOn(prev => !prev);
