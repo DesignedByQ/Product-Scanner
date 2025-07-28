@@ -1,78 +1,63 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
-  const scannerRef = useRef(null); // Store the scanner instance
-  const isScanning = useRef(false); // Track scanning state
-
+  const scannerRef = useRef(null);
+  const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode('qr-scanner');
-    scannerRef.current = html5QrCode;
+    scannerRef.current = new Html5Qrcode('qr-scanner');
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {});
+        scannerRef.current.clear().catch(() => {});
+      }
+    };
+  }, []);
 
-    const startScanner = async () => {
-      if (!isScanning.current) {
-        const html5QrCode = new Html5Qrcode('qr-scanner');
-        scannerRef.current = html5QrCode;
-
-        try {
-          await html5QrCode.start(
-            { facingMode: 'environment' }, // Use back camera
-            {
-              fps: 10,
-              qrbox: { width: 250, height: 250 },
-            },
-            (decodedText) => {
-              onScan(decodedText); // Pass decoded text to parent
-            },
-            (errorMessage) => {
-              console.error('QR scan error:', errorMessage);
-            }
-          );
-          isScanning.current = true;
-        } catch (error) {
-          console.error('Camera start failed:', error);
-        }
+  const startScanner = async () => {
+    if (!scanning && scannerRef.current) {
       try {
-        await html5QrCode.start(
+        await scannerRef.current.start(
           { facingMode: 'environment' },
-          {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-          },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
           (decodedText) => {
-            onScan(decodedText); // Handle scanned text
-
-            // Pause and restart to allow continuous scanning
-            html5QrCode.pause();
+            onScan(decodedText);
+            // Pause and resume for continuous scanning
+            scannerRef.current.pause();
             setTimeout(() => {
-              html5QrCode.resume().catch((err) => {
-                console.error('Resume failed:', err);
-              });
-            }, 500); // Adjust delay for smoother scanning
+              scannerRef.current.resume().catch(() => {});
+            }, 500);
           },
           (errorMessage) => {
             console.error('QR scan error:', errorMessage);
           }
         );
+        setScanning(true);
       } catch (err) {
         console.error('Camera start failed:', err);
       }
-    };
+    }
+  };
 
-    startScanner();
-
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch((err) => console.error('Stop error:', err));
+  const stopScanner = async () => {
+    if (scanning && scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+        setScanning(false);
+      } catch (err) {
+        console.error('Camera stop failed:', err);
       }
-      html5QrCode.stop().catch((err) => {
-        console.error('Stop failed:', err);
-      });
-    };
-  }, [onScan]);
+    }
+  };
 
-  return <div id="qr-scanner"></div>;
+  return (
+    <div>
+      <div id="qr-scanner"></div>
+      <button onClick={startScanner} disabled={scanning}>Start Camera</button>
+      <button onClick={stopScanner} disabled={!scanning}>Stop Camera</button>
+    </div>
+  );
 }
 
 export default QRScanner;
