@@ -59,7 +59,7 @@ function QRScanner({ onScan }) {
           maxWidth: "400px",
           border: "2px solid #ccc",
           borderRadius: "10px",
-          backgroundColor: "black",
+          backgroundColor: "white",
         }}
       />
       {isPaused && (
