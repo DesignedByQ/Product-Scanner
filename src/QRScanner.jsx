@@ -6,34 +6,34 @@ function QRScanner({ onScan }) {
   const [scanResult, setScanResult] = useState(null);
 
   useEffect(() => {
+    function success(result) {
+      setScanResult(result);
+      if (onScan) {
+        onScan(result); // Pass scanned data to parent (App)
+      }
+    }
+
+    function error(err) {
+      console.warn("QR Code scan error: ", err);
+    }
 
     const scanner = new Html5QrcodeScanner(
-    "qr-scanner", {
-      qrbox: { width: 250, height: 250 },
-      //rememberLastUsedCamera: true,
-      fps: 2,
-  });
+      "qr-scanner", {
+        qrbox: { width: 250, height: 250 },
+        rememberLastUsedCamera: true,
+        fps: 2,
+      }
+    );
 
-  scanner.render(success, error);
-  
-  function success(result) {
-    scanner.clear();
-    setScanResult(result);
-    if (onScan) {
-      onScan(result); // Pass scanned data to parent (App)
-    }
-  }
+    scanner.render(success, error);
 
-  function error(err) {
-    console.warn("QR Code scan error: ", err);
-  }
+    // Optional: cleanup on unmount
+    return () => {
+      scanner.clear().catch(() => {});
+    };
+  }, [onScan]);
 
-  //console.log(scanResult)
-
-  }, [])
-
-    return <div id="qr-scanner"></div>;
+  return <div id="qr-scanner"></div>;
 }
- 
-  
+
 export default QRScanner;
