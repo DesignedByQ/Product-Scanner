@@ -1,31 +1,34 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
-  const scannerRef = useRef(null);
+
+  const [scanResult, setScanResult] = useState(null);
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner('qr-scanner', {
-      fps: 10,
+
+    const scanner = new Html5QrcodeScanner(
+    "qr-scanner", {
       qrbox: { width: 250, height: 250 },
-    });
+      //rememberLastUsedCamera: true,
+      fps: 2,
+  });
 
-    scanner.render(
-      (decodedText) => {
-        onScan(decodedText);
-      },
-      (errorMessage) => {
-        console.error('QR scan error:', errorMessage);
-      }
-    );
+  scanner.render(success, error);
+  
+  function success(result) {
+    scanner.clear();
+    setScanResult(result);
+  }
 
-    scannerRef.current = scanner;
-    return () => {
-      scanner.clear();
-    };
-  }, [onScan]);
+  function error(err) {
+    console.warn("QR Code scan error: ", err);
+  }
 
-  return <div id="qr-scanner"></div>;
+  }, [])
+
+    return <div id="qr-scanner"></div>;
 }
-
+ 
+  
 export default QRScanner;
