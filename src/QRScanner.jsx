@@ -1,48 +1,61 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import QrScanner from 'qr-scanner';
+
+// Ensure worker path is set for performance
+QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
 
 function QRScanner({ onScan }) {
+  const videoRef = useRef(null);
   const scannerRef = useRef(null);
   const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
-    // Initialize the scanner
-    const scanner = new Html5QrcodeScanner('qr-scanner', {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-    });
+    if (!videoRef.current) return;
 
-    scanner.render(
-      (decodedText) => {
-        if (!scanning) { // Debounce to prevent multiple scans
+    const scanner = new QrScanner(
+      videoRef.current,
+      (result) => {
+        if (!scanning) {
           setScanning(true);
-          onScan(decodedText);
-          console.log("Scanned: ", decodedText);
+          onScan(result.data); // Pass scanned QR data to App
+          console.log("Scanned QR Data:", result.data);
 
-          // Short pause to allow continuous scanning
-          setTimeout(() => setScanning(false), 1500); // Adjust delay as needed
+          // Allow new scans after a short pause
+          setTimeout(() => setScanning(false), 1500);
         }
       },
-      (errorMessage) => {
-        console.error('QR scan error:', errorMessage);
+      {
+        highlightScanRegion: true,
+        highlightCodeOutline: true,
       }
     );
+
+    scanner.start()
+      .then(() => console.log("QR Scanner started"))
+      .catch((err) => console.error("Scanner failed to start:", err));
 
     scannerRef.current = scanner;
 
     return () => {
-      // Proper cleanup on component unmount
-      //scanner.clear();
-      scanner.clear();
-      setScanning(true)
+      scanner.stop();
+      scanner.destroy();
     };
   }, [onScan, scanning]);
 
   return (
-    <div>
-      <div id="qr-scanner" style={{ width: "100%", minHeight: "300px" }}></div>
+    <div style={{ width: "100%", textAlign: "center" }}>
+      <video
+        ref={videoRef}
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          border: "2px solid #ccc",
+          borderRadius: "10px"
+        }}
+      />
     </div>
   );
 }
 
 export default QRScanner;
+
