@@ -21,11 +21,13 @@ function QRScanner({ onScan }) {
           onScanRef.current(result.data);
           console.log("Scanned:", result.data);
           setIsPaused(true); // auto-pause after a scan
+          scanner.stop(); // explicitly stop stream on iOS
         }
       },
       {
         highlightScanRegion: true,
         highlightCodeOutline: true,
+        returnDetailedScanResult: true,
       }
     );
 
@@ -43,7 +45,13 @@ function QRScanner({ onScan }) {
 
   const handleResume = async () => {
     if (scannerRef.current) {
-      setIsPaused(false);
+      try {
+        await scannerRef.current.start(); // restart camera explicitly
+        setIsPaused(false);
+        console.log("Scanner resumed.");
+      } catch (err) {
+        console.error("Failed to resume scanner:", err);
+      }
     }
   };
 
