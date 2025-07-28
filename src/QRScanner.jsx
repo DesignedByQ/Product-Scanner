@@ -5,6 +5,7 @@ function QRScanner({ onScan }) {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [scannerKey, setScannerKey] = useState(0); // force reinit on iOS
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -16,7 +17,9 @@ function QRScanner({ onScan }) {
           console.log("Scanned:", result.data);
           onScan(result.data);
           setIsPaused(true);
-          scanner.stop(); // stop camera after one scan
+
+          // Stop camera stream to avoid iOS blank bug
+          scanner.stop();
         }
       },
       {
@@ -36,23 +39,17 @@ function QRScanner({ onScan }) {
       scanner.stop();
       scanner.destroy();
     };
-  }, [onScan, isPaused]);
+  }, [scannerKey, onScan, isPaused]); // reinit when scannerKey changes
 
-  const handleResume = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.start();
-        setIsPaused(false);
-        console.log("Scanner resumed.");
-      } catch (err) {
-        console.error("Failed to resume scanner:", err);
-      }
-    }
+  const handleResume = () => {
+    setIsPaused(false);
+    setScannerKey((prev) => prev + 1); // rebuild scanner with fresh camera stream
   };
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
       <video
+        key={scannerKey} // force a new <video> element
         ref={videoRef}
         playsInline
         muted
@@ -62,7 +59,7 @@ function QRScanner({ onScan }) {
           maxWidth: "400px",
           border: "2px solid #ccc",
           borderRadius: "10px",
-          backgroundColor: "black", // avoids white screen on Safari
+          backgroundColor: "black",
         }}
       />
       {isPaused && (
@@ -79,7 +76,7 @@ function QRScanner({ onScan }) {
             cursor: "pointer",
           }}
         >
-          Scan Next Item
+          Tap to Scan Next Item
         </button>
       )}
     </div>
