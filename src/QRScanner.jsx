@@ -34,7 +34,7 @@ function QRScanner({ onScan }) {
 
   scanner.render(success, error);
 
-  }, [])
+  }, [onScan])
 
     return <div id="qr-scanner"></div>;
 }
