@@ -3,8 +3,6 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 
 function QRScanner({ onScan }) {
 
-  //const [scanResult, setScanResult] = useState(null);
-
   useEffect(() => {
 
     const scanner = new Html5QrcodeScanner(
@@ -14,27 +12,20 @@ function QRScanner({ onScan }) {
       fps: 5,
     });
 
+    scanner.render(success, error);
+
     function success(decodedText) {
       // Pass scanned data to parent
       if (onScan) {
         onScan(decodedText);
       }
-
-            // Instead of clearing, just pause & resume after 1s
-      scanner.pause();
-      setTimeout(() => {
-        scanner.resume().catch((err) => console.error("Resume failed:", err));
-      }, 1000);
-
     }
 
   function error(err) {
     console.warn("QR Code scan error: ", err);
   }
-
-  scanner.render(success, error);
-
-  }, [onScan])
+ 
+  }, [])
 
     return <div id="qr-scanner"></div>;
 }
