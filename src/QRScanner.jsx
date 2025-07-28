@@ -6,7 +6,8 @@ const QR_READER_ID = "qr-code-reader";
 function QRScanner({ onScan }) {
   const scannerRef = useRef(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const processingRef = useRef(false); // useRef instead of state
+  const lastResultRef = useRef(null);
+  const isProcessingRef = useRef(false);
 
   useEffect(() => {
     if (!isCameraOn) return;
@@ -19,40 +20,50 @@ function QRScanner({ onScan }) {
     const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
     const onScanSuccess = (decodedText) => {
-      if (processingRef.current) return;
+      // Ignore duplicates
+      if (decodedText === lastResultRef.current) return;
 
-      processingRef.current = true;
+      if (isProcessingRef.current) return;
+      isProcessingRef.current = true;
+
+      lastResultRef.current = decodedText;
       onScan(decodedText);
       console.log(`Scan successful: ${decodedText}`);
 
+      // Reset after short cooldown
       setTimeout(() => {
-        processingRef.current = false;
-      }, 2000);
+        isProcessingRef.current = false;
+      }, 1000); // 1s cooldown
     };
 
-    const onScanError = (err) => {
-      // Optionally log errors
+    const onScanError = () => {
+      // do nothing, library calls this often
     };
 
-    html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanError)
-      .catch((err) => {
-        console.error("Unable to start scanning.", err);
-        setIsCameraOn(false);
-      });
+    html5QrCode.start(
+      { facingMode: "environment" },
+      config,
+      onScanSuccess,
+      onScanError
+    ).catch((err) => {
+      console.error("Unable to start scanning.", err);
+      setIsCameraOn(false);
+    });
 
     return () => {
       if (html5QrCode.isScanning) {
         html5QrCode.stop().then(() => {
-          html5QrCode.clear(); // Important: clears the video feed
-          console.log("QR Code scanning stopped.");
+          html5QrCode.clear();
+          console.log("QR scanning stopped.");
         }).catch(err => console.error("Failed to stop scanning.", err));
       }
     };
-  }, [isCameraOn, onScan]); // removed isProcessing
+  }, [isCameraOn, onScan]);
 
   const handleToggleCamera = () => {
     setIsCameraOn(prev => !prev);
-    processingRef.current = false;
+    isProcessingRef.current = false;
+    lastResultRef.current = null;
   };
 
   return (
