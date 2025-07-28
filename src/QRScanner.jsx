@@ -4,12 +4,7 @@ import QrScanner from 'qr-scanner';
 function QRScanner({ onScan }) {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
-  const onScanRef = useRef(onScan);
   const [isPaused, setIsPaused] = useState(false);
-
-  useEffect(() => {
-    onScanRef.current = onScan;
-  }, [onScan]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -17,11 +12,11 @@ function QRScanner({ onScan }) {
     const scanner = new QrScanner(
       videoRef.current,
       (result) => {
-        if (!isPaused && onScanRef.current) {
-          onScanRef.current(result.data);
+        if (!isPaused) {
           console.log("Scanned:", result.data);
-          setIsPaused(true); // auto-pause after scan
-          scanner.stop(); // explicitly stop stream on iOS
+          onScan(result.data);
+          setIsPaused(true);
+          scanner.stop(); // stop camera after one scan
         }
       },
       {
@@ -41,12 +36,12 @@ function QRScanner({ onScan }) {
       scanner.stop();
       scanner.destroy();
     };
-  }, [isPaused]);
+  }, [onScan, isPaused]);
 
   const handleResume = async () => {
     if (scannerRef.current) {
       try {
-        await scannerRef.current.start(); // restart camera explicitly
+        await scannerRef.current.start();
         setIsPaused(false);
         console.log("Scanner resumed.");
       } catch (err) {
@@ -59,7 +54,7 @@ function QRScanner({ onScan }) {
     <div style={{ width: "100%", textAlign: "center" }}>
       <video
         ref={videoRef}
-        playsInline // important for iOS Safari
+        playsInline
         muted
         autoPlay
         style={{
@@ -67,7 +62,7 @@ function QRScanner({ onScan }) {
           maxWidth: "400px",
           border: "2px solid #ccc",
           borderRadius: "10px",
-          backgroundColor: "black" // avoids white blank screen
+          backgroundColor: "black", // avoids white screen on Safari
         }}
       />
       {isPaused && (
@@ -75,12 +70,13 @@ function QRScanner({ onScan }) {
           onClick={handleResume}
           style={{
             marginTop: "10px",
-            padding: "10px 20px",
+            padding: "12px 24px",
             background: "green",
             color: "white",
+            fontWeight: "bold",
             border: "none",
             borderRadius: "8px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Scan Next Item
