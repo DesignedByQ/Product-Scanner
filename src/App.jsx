@@ -4,7 +4,7 @@ import QRScanner from './QRScanner';
 
 function App() {
   const [exProd] = useState([
-    { prod_id: '1', name: 'Hand & Nail Oil', qty: 0, act_ingredient: 'Avocado Oil, Argan Oil, Tea Tree, Shea Butter, Jasmine', millilitres: 120, brand: 'Serene', price: 10000, type: 'Handcream' },
+    { prod_id: '1', name: 'Hand & Nail Cream', qty: 0, act_ingredient: 'Avocado Oil, Argan Oil, Tea Tree, Shea Butter, Jasmine', millilitres: 120, brand: 'Serene', price: 10000, type: 'Handcream' },
     { prod_id: '2', name: 'Rose Shower Gel', qty: 0, act_ingredient: 'Rose Oil', millilitres: 250, brand: 'Serene', price: 15000, type: 'Shower Gel' },
     { prod_id: '3', name: 'Mango Body Butter', qty: 0, act_ingredient: 'Shea Butter, Mango Butter', millilitres: 250, brand: 'Serene', price: 20000, type: 'Body Butter' },
     { prod_id: '4', name: 'Glimpse of Gold', qty: 0, act_ingredient: 'Jasmin', millilitres: 50, brand: 'Elixir', price: 50000, type: 'Eau De Perfume' },
