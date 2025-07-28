@@ -4,7 +4,12 @@ import QrScanner from 'qr-scanner';
 function QRScanner({ onScan }) {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
-  const [scanning, setScanning] = useState(false);
+  const onScanRef = useRef(onScan);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    onScanRef.current = onScan;
+  }, [onScan]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -12,13 +17,10 @@ function QRScanner({ onScan }) {
     const scanner = new QrScanner(
       videoRef.current,
       (result) => {
-        if (!scanning) { // prevent duplicate rapid scans
-          setScanning(true);
-          onScan(result.data);
+        if (!isPaused && onScanRef.current) {
+          onScanRef.current(result.data);
           console.log("Scanned:", result.data);
-
-          // Allow scanning again after short pause
-          setTimeout(() => setScanning(false), 1500);
+          setIsPaused(true); // auto-pause after a scan
         }
       },
       {
@@ -28,30 +30,50 @@ function QRScanner({ onScan }) {
     );
 
     scanner.start()
-      .then(() => {
-        console.log("QR Scanner started.");
-      })
-      .catch((err) => {
-        console.error("Failed to start scanner:", err);
-      });
+      .then(() => console.log("QR Scanner started."))
+      .catch((err) => console.error("Failed to start scanner:", err));
 
     scannerRef.current = scanner;
 
     return () => {
       scanner.stop();
       scanner.destroy();
-      scanner.start();
-      //scanner.destroy();
-      //scanner.clear()
     };
-  }, [onScan, scanning]);
+  }, [isPaused]);
+
+  const handleResume = async () => {
+    if (scannerRef.current) {
+      setIsPaused(false);
+    }
+  };
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
       <video
         ref={videoRef}
-        style={{ width: "100%", maxWidth: "400px", border: "2px solid #ccc", borderRadius: "10px" }}
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          border: "2px solid #ccc",
+          borderRadius: "10px"
+        }}
       />
+      {isPaused && (
+        <button
+          onClick={handleResume}
+          style={{
+            marginTop: "10px",
+            padding: "10px 20px",
+            background: "green",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          Scan Next Item
+        </button>
+      )}
     </div>
   );
 }
