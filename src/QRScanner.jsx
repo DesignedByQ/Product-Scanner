@@ -41,7 +41,7 @@ function QRScanner({ onScan }) {
       scanner.stop();
       scanner.destroy();
     };
-  }, [onScan, isActive]); // reattach when toggling active state
+  }, [onScan, scanning, isActive]); // reattach when toggling active state
 
   // Toggle between Pause and Resume
   const toggleScan = async () => {
