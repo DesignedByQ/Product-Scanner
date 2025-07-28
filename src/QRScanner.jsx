@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import QrScanner from 'qr-scanner';
 
-// Ensure worker path is set for performance
+// Set worker path for better performance
 QrScanner.WORKER_PATH = '/qr-scanner-worker.min.js';
 
 function QRScanner({ onScan }) {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
   const [scanning, setScanning] = useState(false);
+  const [isActive, setIsActive] = useState(true); // controls Pause/Resume
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -15,12 +16,12 @@ function QRScanner({ onScan }) {
     const scanner = new QrScanner(
       videoRef.current,
       (result) => {
-        if (!scanning) {
+        if (!scanning && isActive) {
           setScanning(true);
           onScan(result.data);
           console.log("Scanned QR Data:", result.data);
 
-          // Reset scanning flag after a short delay
+          // Reset scanning flag so more scans can occur
           setTimeout(() => setScanning(false), 1500);
         }
       },
@@ -36,13 +37,24 @@ function QRScanner({ onScan }) {
 
     scannerRef.current = scanner;
 
-    // cleanup on unmount
     return () => {
       scanner.stop();
       scanner.destroy();
     };
-  // ⚡ only run once when mounted
-  }, [onScan]);  
+  }, [onScan, isActive]); // reattach when toggling active state
+
+  // Toggle between Pause and Resume
+  const toggleScan = async () => {
+    if (!scannerRef.current) return;
+
+    if (isActive) {
+      await scannerRef.current.stop();
+      setIsActive(false);
+    } else {
+      await scannerRef.current.start();
+      setIsActive(true);
+    }
+  };
 
   return (
     <div style={{ width: "100%", textAlign: "center" }}>
@@ -52,9 +64,24 @@ function QRScanner({ onScan }) {
           width: "100%",
           maxWidth: "400px",
           border: "2px solid #ccc",
-          borderRadius: "10px"
+          borderRadius: "10px",
         }}
       />
+      <div style={{ marginTop: "10px" }}>
+        <button 
+          onClick={toggleScan} 
+          style={{
+            padding: "10px 20px",
+            background: isActive ? "red" : "green",
+            color: "white",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          {isActive ? "Pause Scan" : "Resume Scan"}
+        </button>
+      </div>
     </div>
   );
 }
