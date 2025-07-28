@@ -39,6 +39,7 @@ function QRScanner({ onScan }) {
 
     return () => {
       scanner.stop();
+      scanner.clear()
       scanner.start();
       //scanner.destroy();
       //scanner.clear()
