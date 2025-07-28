@@ -8,7 +8,7 @@ function QRScanner({ onScan }) {
   const videoRef = useRef(null);
   const scannerRef = useRef(null);
   const [scanning, setScanning] = useState(false);
-  const [isActive, setIsActive] = useState(true); // controls Pause/Resume
+  const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -21,7 +21,7 @@ function QRScanner({ onScan }) {
           onScan(result.data);
           console.log("Scanned QR Data:", result.data);
 
-          // Reset scanning flag so more scans can occur
+          // Reset scanning flag to allow another scan
           setTimeout(() => setScanning(false), 1500);
         }
       },
@@ -37,18 +37,19 @@ function QRScanner({ onScan }) {
 
     scannerRef.current = scanner;
 
+    // cleanup only on unmount
     return () => {
       scanner.stop();
       scanner.destroy();
     };
-  }, [onScan, scanning, isActive]); // reattach when toggling active state
+  }, []); // 🚀 empty dependency array = run once only
 
-  // Toggle between Pause and Resume
+  // Toggle Pause / Resume
   const toggleScan = async () => {
     if (!scannerRef.current) return;
 
     if (isActive) {
-      await scannerRef.current.stop();
+      await scannerRef.current.pause();
       setIsActive(false);
     } else {
       await scannerRef.current.start();
