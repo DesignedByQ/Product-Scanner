@@ -19,6 +19,9 @@ function QRScanner({ onScan }) {
   function success(result) {
     scanner.clear();
     setScanResult(result);
+    if (onScan) {
+      onScan(result); // Pass scanned data to parent (App)
+    }
   }
 
   function error(err) {
@@ -27,7 +30,7 @@ function QRScanner({ onScan }) {
 
   //console.log(scanResult)
 
-  }, [onScan])
+  }, [])
 
     return <div id="qr-scanner"></div>;
 }
