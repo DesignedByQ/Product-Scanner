@@ -27,7 +27,7 @@ function QRScanner({ onScan }) {
 
   //console.log(scanResult)
 
-  }, [])
+  }, [onScan])
 
     return <div id="qr-scanner"></div>;
 }
