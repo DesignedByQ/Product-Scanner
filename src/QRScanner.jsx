@@ -1,69 +1,97 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
+
+// The ID for the video element
+const QR_READER_ID = "qr-code-reader";
 
 function QRScanner({ onScan }) {
-  // Use a ref to hold the scanner instance.
   const scannerRef = useRef(null);
-  // State to control the camera's on/off status.
   const [isCameraOn, setIsCameraOn] = useState(false);
+  // State to prevent multiple scan calls for the same QR code
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // This useEffect hook manages the scanner's lifecycle.
-  // It runs whenever `isCameraOn` or `onScan` changes.
   useEffect(() => {
-    if (isCameraOn) {
-      // Create a new scanner instance only if the camera should be on.
-      const scanner = new Html5QrcodeScanner(
-        'qr-scanner-container', // The ID of the container element
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          // Important: request the back camera
-          facingMode: "environment"
-        },
-        /* verbose= */ false
-      );
-
-      // Define the success callback
-      const onScanSuccess = (decodedText, decodedResult) => {
-        // Pass the decoded text to the parent component
-        onScan(decodedText);
-        // Turn off the camera after a successful scan = change to false
-        setIsCameraOn(true); // Keep camera on for continuous scanning
-        // You can also add feedback to the user here
-        console.log(`Scan successful: ${decodedText}`);
-      };
-
-      // Define the error callback
-      const onScanError = (errorMessage) => {
-        // You can ignore errors or log them for debugging.
-        console.warn(`QR scan error: ${errorMessage}`);
-      };
-
-      // Start scanning
-      scanner.render(onScanSuccess, onScanError);
-      scannerRef.current = scanner;
+    // Only proceed if the camera should be on
+    if (!isCameraOn) {
+      return;
     }
+    
+    // Ensure the scannerRef is not already holding an instance
+    if (!scannerRef.current) {
+      scannerRef.current = new Html5Qrcode(QR_READER_ID);
+    }
+    const html5QrCode = scannerRef.current;
 
-    // Cleanup function: this runs when the component unmounts OR when the effect re-runs.
+    // Configuration for the scanner
+    const config = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 },
+    };
+
+    // Success callback
+    const onScanSuccess = (decodedText, decodedResult) => {
+      // Prevent processing the same scan multiple times in a row
+      if (isProcessing) {
+        return;
+      }
+      
+      setIsProcessing(true); // Set processing flag
+      onScan(decodedText); // Pass result to parent
+      console.log(`Continuous scan successful: ${decodedText}`);
+
+      // Add a small delay before allowing another scan
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 2000); // 2-second cooldown
+    };
+    
+    // Error callback (can be left empty to ignore non-scans)
+    const onScanError = (error) => {
+      // console.warn(error);
+    };
+
+    // Start the camera and scanning
+    html5QrCode.start(
+      { facingMode: "environment" }, // Prefer the back camera
+      config,
+      onScanSuccess,
+      onScanError
+    ).catch((err) => {
+      console.error("Unable to start scanning.", err);
+      // If there's an error, turn the camera off
+      setIsCameraOn(false);
+    });
+
+    // Cleanup function: This is critical for stopping the camera
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.clear();
-        scannerRef.current = null;
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop()
+          .then(() => {
+            console.log("QR Code scanning stopped.");
+            // Clearing the reference is not strictly necessary but good practice
+            scannerRef.current = null;
+          })
+          .catch((err) => {
+            console.error("Failed to stop scanning.", err);
+          });
       }
     };
-  }, [isCameraOn, onScan]); // Dependency array
+    // Re-run the effect if the camera's state changes
+  }, [isCameraOn, onScan, isProcessing]);
 
   const handleToggleCamera = () => {
-    setIsCameraOn(prev => !prev); // Toggle camera state
+    setIsCameraOn(prev => !prev);
+    // Reset processing state when toggling camera
+    setIsProcessing(false); 
   };
 
   return (
     <div>
       <button onClick={handleToggleCamera}>
-        {isCameraOn ? 'Turn Off Camera' : 'Turn On Camera'}
+        {isCameraOn ? 'Stop Scanning' : 'Start Scanning'}
       </button>
-      {/* The container element for the scanner will only be visible when the camera is on */}
-      {isCameraOn && <div id="qr-scanner-container" style={{ width: "100%", marginTop: "10px" }}></div>}
+      {/* The video element is required for Html5Qrcode to attach the camera stream */}
+      <div id={QR_READER_ID} style={{ width: '100%', maxWidth: '500px', marginTop: '10px' }}></div>
     </div>
   );
 }
