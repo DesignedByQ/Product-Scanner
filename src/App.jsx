@@ -161,7 +161,7 @@ function App() {
 
   const convertJsonToCsv = (data) => {
     // Define the CSV headers
-    const headers = ['Phone', 'Product ID', 'Product Name', 'Quantity', 'Price', 'Total Cost'];
+    const headers = ['Phone', 'Product ID', 'Product Name', 'Quantity', 'Price', 'Product Type', 'Total Cost', 'Delivery', 'Payment', 'Location', 'Discount'];
     //console.log('Data:', data.products.map(product =>product.name));
     // Map JSON to CSV rows
     const rows = data.products.map(product => [
