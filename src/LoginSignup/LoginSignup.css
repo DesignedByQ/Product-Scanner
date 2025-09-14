@@ -1,0 +1,135 @@
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      padding: 10px;
+    }
+  
+    input[type="text"],
+    input[type="number"] {
+      font-size: 16px;
+      /* width: 80%; */
+    }
+  
+    button {
+      width: 80%;
+      margin-top: 10px;
+    }
+  }
+
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    gap: 9px;
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  .text{
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+
+  .underline {
+    width: 61px;
+    height: 6px;
+    background: #FFC300;
+    border-radius: 9px;
+  }
+
+  .input img{
+    margin: 0px 30px
+  }
+
+  .inputs{
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    padding: 10px;
+    margin: 0 auto;
+  }
+
+  .input {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 480px;
+    height: 80px;
+    background: #F5F5F5;
+    border-radius: 6px;
+  }
+
+  .input input{
+    height: 50px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #797979;
+    font-size: 19px;
+  }
+
+  .forgot-password {
+    padding-left: auto;
+    margin-top: 27px;
+    font-size: 18px;
+    color: #797979;
+  }
+
+  .forgot-password span {
+    color: #000000;
+    cursor: pointer;
+  }
+
+  .submit-container {
+    display: flex;
+    gap: 5px;
+    margin: 60px auto;
+    max-width: 600px;
+    padding: 10px;
+    
+  }
+
+    .submit {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        width: 200px;
+        height: 50px;   
+        color: #FFC300;
+        background: #000000;
+        border-radius: 50px;
+        font-size: 20px;
+        font-weight: 700;   
+        cursor: pointer;
+    }
+
+    .gray {
+        background: #F5F5F5;
+        color: #797979;
+    }
+
+    .error-message {
+        color: #dc3545; /* red */
+        font-size: 13px;
+        margin: 5px 0 10px 50px; /* indented under input */
+    }
+
+    .response-message {
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .response-message.success {
+        color: #28a745; /* green */
+    }
+
+    .response-message.error {
+        color: #dc3545; /* red */
+    }

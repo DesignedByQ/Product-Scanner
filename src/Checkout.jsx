@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Styles.css';
 import QRScanner from './QRScanner'; 
 
-function App() {
+function Checkout() {
   const [exProd] = useState([
     { prod_id: '1', name: 'Hand & Nail Cream', qty: 0, act_ingredient: 'Avocado Oil, Argan Oil, Tea Tree, Shea Butter, Jasmine', millilitres: 120, brand: 'Serene', price: 10000, type: 'Handcream' },
     { prod_id: '2', name: 'Rose Shower Gel', qty: 0, act_ingredient: 'Rose Oil', millilitres: 250, brand: 'Serene', price: 15000, type: 'Shower Gel' },
@@ -385,8 +385,8 @@ function App() {
           value={location}
           onChange={(e) => setLocation(e.target.value)}
         >
-          <option value="Sinza">Sinza</option>
-          <option value="TBC">TBC</option>
+          <option value="Kimara">Kimara</option>
+          {/*<option value="TBC">TBC</option>*/}
         </select>
       </div>
 
@@ -414,4 +414,4 @@ function App() {
   );
 }
 
-export default App;
+export default Checkout;
